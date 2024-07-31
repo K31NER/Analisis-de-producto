@@ -140,9 +140,14 @@ if buscar:
             
         st.dataframe(df)#al usar este metodo nos permite descargarlo como csv
         st.write("Grafica de relacion puntuacion-precio")
-        
-            #mostramos la grafica de comparacion puntuacion precio
-        st.line_chart(df_ordenado,x='precio', y='puntuacion')
+
+        #creamos las columnas para las graficas
+        g1,g2 = st.columns(2)
+        #mostramos la grafica de comparacion puntuacion precio
+        with g1:
+            st.line_chart(df_ordenado,x='precio', y='puntuacion')
+        with g2:
+            st.scatter_chart(df_ordenado[['puntuacion','precio']],x='precio', y='puntuacion', width=600, height=350,)
         
         #creamos el boton de descarga
         descargar_excel = st.download_button(
