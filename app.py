@@ -8,7 +8,7 @@ import time
 #configuaramos la pagina 
 st.set_page_config(
     page_title="Scraperml",
-    page_icon="📈",
+    page_icon="https://cdn-icons-png.flaticon.com/512/1508/1508873.png",
 )
 #ponemos un titulo a la pagina
 st.title("Analisis de producto -:orange[Mercado libre]")
