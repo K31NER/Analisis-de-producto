@@ -11,7 +11,7 @@ st.set_page_config(
     page_icon="📈",
 )
 #ponemos un titulo a la pagina
-st.title("Analisis de producto - Mercado libre")
+st.title("Analisis de producto -:orange[Mercado libre]")
 
 #recibimos el producto a buscar
 producto = st.text_input("Que producto desea analizar", placeholder="nombre del producto")
