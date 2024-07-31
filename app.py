@@ -5,7 +5,11 @@ import pandas as pd
 from io import BytesIO
 import time
     
-
+#configuaramos la pagina 
+st.set_page_config(
+    page_title="Scraperml",
+    page_icon="📈",
+)
 #ponemos un titulo a la pagina
 st.title("Analisis de producto - Mercado libre")
 
