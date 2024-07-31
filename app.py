@@ -122,11 +122,18 @@ if buscar:
         total_productos = len(lista_precios) 
         precio_promedio = total_precio/total_productos
         
+        #generamos las columnas
+        c1,c2,c3,c4 = st.columns(4)
         #mostramos en la pagina
-        st.write(f"Calificacion promedio: {calificacion_promedio}")
-        st.write(F"Precio promedio: {formatear_precio(precio_promedio)}")
-        st.write(f"Mayor precio: {formatear_precio(mayor_precio)}")
-        st.write(f"Menor precio: {formatear_precio(menor_precio)}")
+        with c1:    
+            st.write(f"Calificacion promedio: {calificacion_promedio}")
+        with c2:
+            st.write(F"Precio promedio: {formatear_precio(precio_promedio)}")
+        with c3:
+            st.write(f"Mayor precio: {formatear_precio(mayor_precio)}")
+        with c4:
+            st.write(f"Menor precio: {formatear_precio(menor_precio)}")
+            
         st.dataframe(df)#al usar este metodo nos permite descargarlo como csv
         st.write("Grafica de relacion puntuacion-precio")
         
