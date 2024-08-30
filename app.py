@@ -48,15 +48,15 @@ if pais_elegido in urls_mercado_libre:
     #verificamos la conexion
     soup = BeautifulSoup(contenido,'html.parser')#extraemos el contenido
     #buscamos todas las etiquetas (div) con la clase que contiene toda la informacion del producto 
-    productos = soup.find_all('div', class_ = 'ui-search-result__content-wrapper')
+    productos = soup.find_all('div', class_ = 'ui-search-result__wrapper')
     #obtenemos el link del producto 
-    enlaces_productos = soup.find_all('a',class_='ui-search-item__group__element ui-search-link__title-card ui-search-link')
+    enlaces_productos = soup.find_all('a',class_='poly-component__title')
 
 
 for producto in productos:
-    nombre_productos = producto.find('h2', class_ = 'ui-search-item__title').text
-    precio_productos = producto.find('span', class_='andes-money-amount ui-search-price__part ui-search-price__part--medium andes-money-amount--cents-superscript').text
-    puntuacion_producto = producto.find('span', class_='ui-search-reviews__rating-number')
+    nombre_productos = producto.find('h2', class_ = 'poly-box').text
+    precio_productos = producto.find('span', class_='andes-money-amount__fraction').text
+    puntuacion_producto = producto.find('span', class_='poly-reviews__rating')
     link = producto.find("a")["href"]#extraemos los links
     
     #volvemos a hacer web scraping ( este proceso relentiza notablemente el programa)
