@@ -28,7 +28,7 @@ def formatear_precio(precio_num):
     return f"{precio_num:,.0f}" 
 
 #definimos un diccionario con su pais y url
-urls_mercado_libre = 'Colombia': 'https://listado.mercadolibre.com.co/'
+urls_mercado_libre ='https://listado.mercadolibre.com.co/'
 
 #modificamos el url
 
