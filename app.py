@@ -21,43 +21,29 @@ lista_nombres = []
 lista_precios = []
 lista_puntuacion = []
 puntuacion_float = []
-lista_links = []
 #lista_de_ventas = []
 
 #funcion para mostrar el precio de mejor manera
 def formatear_precio(precio_num):
     return f"{precio_num:,.0f}" 
 
-#definimos los paises 
-paises = ['Colombia','México']
-
 #definimos un diccionario con su pais y url
-urls_mercado_libre = {
-    'Colombia': 'https://listado.mercadolibre.com.co/',
-    'México': 'https://listado.mercadolibre.com.mx/'
-}
-
-#creamos el cuadro de eleccion
-pais_elegido = st.selectbox("Selecciona un pais: ", paises)
+urls_mercado_libre = 'Colombia': 'https://listado.mercadolibre.com.co/'
 
 #modificamos el url
-if pais_elegido in urls_mercado_libre:
-    website = f"{urls_mercado_libre[pais_elegido]}{producto}"
-    respuesta = requests.get(website)#hacemos la solicitud 
-    contenido = respuesta.content#extraemos el contenido 
-    #verificamos la conexion
-    soup = BeautifulSoup(contenido,'html.parser')#extraemos el contenido
-    #buscamos todas las etiquetas (div) con la clase que contiene toda la informacion del producto 
-    productos = soup.find_all('div', class_ = 'ui-search-result__wrapper')
-    #obtenemos el link del producto 
-    enlaces_productos = soup.find_all('a',class_='poly-component__title')
 
+website = f"{urls_mercado_libre}{producto}"
+respuesta = requests.get(website)#hacemos la solicitud 
+contenido = respuesta.content#extraemos el contenido 
+#verificamos la conexion
+soup = BeautifulSoup(contenido,'html.parser')#extraemos el contenido
+#buscamos todas las etiquetas (div) con la clase que contiene toda la informacion del producto 
+productos = soup.find_all('div', class_ = 'ui-search-result__wrapper')
 
 for producto in productos:
     nombre_productos = producto.find('h2', class_ = 'poly-box').text
     precio_productos = producto.find('span', class_='andes-money-amount__fraction').text
     puntuacion_producto = producto.find('span', class_='poly-reviews__rating')
-    link = producto.find("a")["href"]#extraemos los links
     
     #volvemos a hacer web scraping ( este proceso relentiza notablemente el programa)
     #descripcion_producto = requests.get(link)
@@ -88,7 +74,7 @@ for producto in productos:
     lista_nombres.append(nombre_productos)
     lista_precios.append(precio_real)
     lista_puntuacion.append(puntuacion_producto)
-    lista_links.append(link)
+    
 
 
 #creamos un data frame
@@ -97,7 +83,6 @@ df =  pd.DataFrame({
         'precio': lista_precios,
         'puntuacion' : lista_puntuacion,
         #'Estado - Ventas' : lista_de_ventas,
-        'links de compra': lista_links
     })
 #ordenamos en base al precio, no necesitamos poner indice ya que pandas lo pone pordefecto 
 df_ordenado = df.sort_values(by='precio')
