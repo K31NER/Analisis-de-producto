@@ -65,7 +65,7 @@ for producto in productos:
         puntuacion_float.append(puntuacion) 
     #si no tiene puntuacion(es decir es None) la definimos en cero
     else:
-        puntuacion_producto = 0.1
+        puntuacion_producto = 0
     #llenamos las listas
     #limpiamos el precio para convertirlo
     Precio_limpio =  precio_productos.replace("$", "").replace(".", "").replace(",", "").replace("US","")
