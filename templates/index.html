@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Productos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen py-8">
+    <div class="max-w-6xl mx-auto px-4">
+        <!-- Header -->        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Análisis de Productos</h1>
+            <p class="text-gray-600">Busca y compara productos fácilmente</p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex gap-4">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Buscar productos..." 
+                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                >
+                <button 
+                    id="searchBtn" 
+                    onclick="searchProducts()" 
+                    class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                    Buscar
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Bar -->
+        <div id="loadingBar" class="hidden mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3"></div>
+                    <span class="text-gray-600">Buscando productos...</span>
+                </div>
+                <div class="mt-4 bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full animate-pulse" style="width: 45%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="px-6 py-4 bg-gray-50 border-b">
+                    <h2 class="text-xl font-semibold text-gray-800">Resultados de búsqueda</h2>
+                    <p id="resultsCount" class="text-sm text-gray-600"></p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Puntuación</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enlace</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Los resultados se insertarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Section -->
+        <div id="errorSection" class="hidden">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-6">
+                <div class="flex items-center">
+                    <div class="text-red-400 mr-3">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-red-800 font-medium">Error en la búsqueda</h3>
+                        <p id="errorMessage" class="text-red-600 text-sm mt-1"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function searchProducts() {
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const loadingBar = document.getElementById('loadingBar');
+            const resultsSection = document.getElementById('resultsSection');
+            const errorSection = document.getElementById('errorSection');
+            const resultsTableBody = document.getElementById('resultsTableBody');
+            const resultsCount = document.getElementById('resultsCount');
+            const errorMessage = document.getElementById('errorMessage');
+
+            const searchTerm = searchInput.value.trim();
+            
+            if (!searchTerm) {
+                alert('Por favor ingresa un término de búsqueda');
+                return;
+            }
+
+            // Mostrar loading y ocultar otras secciones
+            loadingBar.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+            errorSection.classList.add('hidden');
+            searchBtn.disabled = true;
+            searchBtn.textContent = 'Buscando...';
+
+            try {
+                const response = await fetch(`/scraper?search=${encodeURIComponent(searchTerm)}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                  // Ocultar loading
+                loadingBar.classList.add('hidden');
+                
+                if (data.Products && data.Products.length > 0) {
+                    // Mostrar resultados
+                    resultsCount.textContent = `Se encontraron ${data.Products.length} productos`;
+                    resultsTableBody.innerHTML = '';
+                    
+                    data.Products.forEach(product => {
+                        const row = document.createElement('tr');
+                        row.className = 'hover:bg-gray-50';
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <img src="${product.imagen || '/static/no-image.png'}" alt="${product.nombre}" class="h-16 w-16 object-cover rounded-lg">
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-medium text-gray-900">${product.nombre}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-lg font-semibold text-green-600">${product.precio}</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <span class="text-yellow-400 mr-1">⭐</span>
+                                    <span class="text-sm text-gray-600">${product.puntuacion || 'N/A'}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="${product.link}" target="_blank" 
+                                   class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                    Ver producto
+                                </a>
+                            </td>
+                        `;
+                        resultsTableBody.appendChild(row);
+                    });
+                    
+                    resultsSection.classList.remove('hidden');
+                } else {
+                    throw new Error('No se encontraron productos');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                loadingBar.classList.add('hidden');
+                errorMessage.textContent = error.message;
+                errorSection.classList.remove('hidden');
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.textContent = 'Buscar';
+            }
+        }
+
+        // Permitir búsqueda con Enter
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProducts();
+            }
+        });
+    </script>
+</body>
+</html>
