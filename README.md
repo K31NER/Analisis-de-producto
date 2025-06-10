@@ -32,6 +32,7 @@ Este es un proyecto de aprendizaje enfocado en practicar técnicas de web scrapi
 - **FastAPI** - Framework web para la API
 - **Playwright** - Herramienta de web scraping y automatización
 - **HTML/CSS/JavaScript** - Interfaz web básica
+- **MongoDB** - Almacenamiento para analisis
 
 ## 📦 Instalación
 
